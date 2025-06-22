@@ -1,24 +1,39 @@
-exports.playGame = (req, res) => {
-  const playerChoice = req.body.choice;
+const Game = require('../models/game.js');
+
+exports.playGame = async (req, res) => {
+  const { choice } = req.body;
   const choices = ['rock', 'paper', 'scissors'];
-  const computerChoice = choices[Math.floor(Math.random() * 3)];
-
+  const computer = choices[Math.floor(Math.random() * 3)];
   let result = '';
-  if (playerChoice === computerChoice) {
-    result = 'Draw';
-  } else if (
-    (playerChoice === 'rock' && computerChoice === 'scissors') ||
-    (playerChoice === 'paper' && computerChoice === 'rock') ||
-    (playerChoice === 'scissors' && computerChoice === 'paper')
-  ) {
-    result = 'You Win!';
-  } else {
-    result = 'You Lose!';
-  }
 
-  res.json({
-    playerChoice,
-    computerChoice,
-    result
-  });
+  if (choice === computer) result = 'Draw';
+  else if (
+    (choice === 'rock' && computer === 'scissors') ||
+    (choice === 'paper' && computer === 'rock') ||
+    (choice === 'scissors' && computer === 'paper')
+  ) result = 'You Win!';
+  else result = 'You Lose!';
+
+  try {
+    const newGame = new Game({
+      playerMove: choice,
+      computerMove: computer,
+      result,
+      user: req.user.id // comes from auth middleware
+    });
+    await newGame.save();
+
+    res.json({ playerMove: choice, computerMove: computer, result });
+  } catch (err) {
+    res.status(500).json({ msg: 'Error saving game', err });
+  }
+};
+exports.getHistory = async (req, res) => {
+  console.log("📥 /history hit by:", req.user.id);
+  try {
+    const games = await Game.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(games);
+  } catch (err) {
+    res.status(500).json({ msg: "Error fetching history", err });
+  }
 };
