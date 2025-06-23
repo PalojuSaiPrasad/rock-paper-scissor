@@ -1,10 +1,7 @@
-const Game = require('../models/game.js');
+const Game = require('../models/game');
 const User = require('../models/User');
 
 exports.playGame = async (req, res) => {
-  console.log("🔥 /play called");
-  console.log("🧾 req.body:", req.body);
-  console.log("👤 req.user:", req.user);
   const { choice } = req.body;
   const choices = ['rock', 'paper', 'scissors'];
   const computer = choices[Math.floor(Math.random() * 3)];
