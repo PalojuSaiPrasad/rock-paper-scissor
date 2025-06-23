@@ -1,22 +1,24 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
-// ✅ Routes NEXT
-const authRoutes = require('./routes/authRoutes');
-const gameRoutes = require('./routes/gameRoutes');
-// ✅ Middlewares FIRST
+
+// ✅ CORS Setup
 app.use(cors({
-  origin: 'https://rock-paper-scissor-2ph08g22c-nageswararao198s-projects.vercel.app/',
-  credentials: true,
+  origin: [
+    'https://rock-paper-scissor-2ph08g22c-nageswararao198s-projects.vercel.app',
+    'http://localhost:3000'
+  ],
+  credentials: true
 }));
 
-app.use(express.json()); // ✅ Body parser must come before routes
+app.use(express.json()); // ✅ Body parser
 
-
-
+// ✅ Routes
+const authRoutes = require('./routes/authRoutes');
+const gameRoutes = require('./routes/gameRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/game', gameRoutes);
 
@@ -28,7 +30,6 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
-// ✅ Start server
+// ✅ Server Listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
-
