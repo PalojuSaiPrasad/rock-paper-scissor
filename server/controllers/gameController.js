@@ -1,6 +1,10 @@
 const Game = require('../models/game.js');
+const User = require('../models/User');
 
 exports.playGame = async (req, res) => {
+  console.log("🔥 /play called");
+  console.log("🧾 req.body:", req.body);
+  console.log("👤 req.user:", req.user);
   const { choice } = req.body;
   const choices = ['rock', 'paper', 'scissors'];
   const computer = choices[Math.floor(Math.random() * 3)];
@@ -35,5 +39,34 @@ exports.getHistory = async (req, res) => {
     res.json(games);
   } catch (err) {
     res.status(500).json({ msg: "Error fetching history", err });
+  }
+};
+
+
+
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const users = await User.find(); // get all users
+    const leaderboard = [];
+
+    for (const user of users) {
+      const games = await Game.find({ user: user._id });
+      const totalGames = games.length;
+      const wins = games.filter(g => g.result === 'You Win!').length;
+      const winPercent = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : 0;
+
+      leaderboard.push({
+        username: user.username,
+        gamesPlayed: totalGames,
+        wins,
+        winPercent
+      });
+    }
+
+    leaderboard.sort((a, b) => b.winPercent - a.winPercent); // highest % first
+    res.json(leaderboard);
+  } catch (err) {
+    console.error("Error in leaderboard:", err);
+    res.status(500).json({ msg: "Server error", err });
   }
 };
