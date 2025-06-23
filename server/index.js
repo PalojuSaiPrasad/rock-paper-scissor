@@ -9,8 +9,8 @@ const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 // ✅ Middlewares FIRST
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: 'https://rock-paper-scissor-2ph08g22c-nageswararao198s-projects.vercel.app/',
+  credentials: true,
 }));
 
 app.use(express.json()); // ✅ Body parser must come before routes
