@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../axiosConfig';
 import {
   Container,
   Typography,
@@ -22,8 +23,8 @@ function Game() {
   const handleChoice = async (choice) => {
     try {
       // Send choice to backend — backend will calculate computer move and result
-      const res = await axios.post(
-        'http://localhost:5000/api/game/play',
+      const res = await api.post(
+        '/api/game/play',
         { choice }, // { choice: 'rock' | 'paper' | 'scissors' }
         {
           headers: {

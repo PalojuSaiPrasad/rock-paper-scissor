@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../axiosConfig';
 import {
   Container,
   TextField,
@@ -24,7 +25,7 @@ function Register() {
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', {
+      const res = await api.post('/api/auth/register', {
         username,
         email,
         password,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import api from '../axiosConfig';
 import axios from 'axios';
 import {
   Container,
@@ -23,7 +24,7 @@ function History() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/game/history', {
+        const res = await api.get('/api/game/history', {
           headers: { Authorization: getToken() },
         });
         setGames(res.data);
